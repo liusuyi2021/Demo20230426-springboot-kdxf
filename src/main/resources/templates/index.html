@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>声音转换</title>
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/HZRecorder.js}"></script>
+    <script th:src="@{/layui/layui.js}"></script>
+    <link th:href="@{/layui/css/layui.css}" th:rel="stylesheet"/>
+</head>
+<body>
+<div class="layui-container">
+    <div class="layui-header"></div>
+    <div class="layui-code-item layui-code-item-preview layui-border layui-show">
+        <div class="layui-row">
+            <div class="layui-col-md6">
+                <audio class="layui-icon layui-icon-headset" controls autoplay></audio>
+            </div>
+            <div class="layui-col-md6">
+                <button class="layui-btn layui-btn-lg" id="start" type="button" value="录音">录音</button>
+                <button class="layui-btn layui-btn-lg" id="stop" type="button" value="停止">停止</button>
+                <button class="layui-btn layui-btn-lg" id="play" type="button" value="播放">播放</button>
+                <button class="layui-btn layui-btn-lg" id="upload" type="button" value="提交">提交</button>
+            </div>
+        </div>
+        <div class="layui-code-item layui-code-item-preview layui-border layui-show">
+            <div class="layui-row">
+                <div id="text"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script th:inline="javascript">
+    layui.use(function () {
+        var layer = layui.layer;
+        // Welcome
+        layer.msg('Hello World', {icon: 6});
+    });
+    var recorder;
+    var audio = document.querySelector('audio');
+    $("#start").click(function () {
+        HZRecorder.get(function (rec) {
+            recorder = rec;
+            recorder.start();
+        });
+    })
+    $("#stop").click(function () {
+        recorder.stop();
+    })
+    $("#play").click(function () {
+        recorder.play(audio);
+    })
+    $("#upload").click(function () {
+        recorder.upload("/getWord", function (state, e) {
+            switch (state) {
+                case 'uploading':
+                    //var percentComplete = Math.round(e.loaded * 100 / e.total) + '%';
+                    break;
+                case 'ok':
+                    //alert(e.target.responseText);
+                    // alert("上传成功");
+                    break;
+                case 'error':
+                    alert("上传失败");
+                    break;
+                case 'cancel':
+                    alert("上传被取消");
+                    break;
+            }
+        });
+    })
+</script>
+</body>
+</html>
